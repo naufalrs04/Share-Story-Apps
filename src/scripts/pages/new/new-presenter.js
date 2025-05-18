@@ -30,11 +30,27 @@ export default class NewPresenter {
       }
 
       this.#view.storeSuccessfully(response.message, response.data);
+
+      await this.#sendPushNotification(description);
     } catch (error) {
       console.error('postNewReport: error:', error);
       this.#view.storeFailed(error.message);
     } finally {
       this.#view.hideSubmitLoadingButton();
+    }
+  }
+
+  async #sendPushNotification(description) {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+
+      registration.showNotification('Story berhasil dibuat', {
+        body: `Anda telah membuat story baru`,
+        icon: '/public/images/logo.png',
+        badge: '/badge.png',
+      });
+    } catch (error) {
+      console.error('Error sending push notification:', error);
     }
   }
 }

@@ -1,8 +1,8 @@
-import HomePresenter from './home-presenter';
-import * as StoryApi from '../../data/api';
+import BookmarkPresenter from './bookmark-presenter';
+import Database from '../../data/database';
 import Map from '../../utils/map';
 
-export default class HomePage {
+export default class BookmarkPage {
   #presenter = null;
   #map = null;
 
@@ -29,9 +29,9 @@ export default class HomePage {
   }
 
   async afterRender() {
-    this.#presenter = new HomePresenter({
+    this.#presenter = new BookmarkPresenter({
       view: this,
-      model: StoryApi,
+      model: Database,
     });
 
     await this.#presenter.initialGalleryAndMap();
@@ -50,8 +50,8 @@ export default class HomePage {
     if (!stories || stories.length <= 0) {
       container.innerHTML = `
       <div id="reports-list-empty" class="reports-list__empty">
-      <h2>Tidak ada daftar story tersedia</h2>
-      <p>Saat ini, story apapun untuk ditampilkan.</p>
+        <h2>Tidak ada story tersimpan</h2>
+        <p>Anda belum menyimpan story apapun.</p>
       </div>
       `;
       return;
@@ -59,46 +59,50 @@ export default class HomePage {
 
     const html = stories
       .map((story) => {
+        // Pastikan struktur data sesuai dengan yang disimpan di IndexedDB
         const photo = story.photoUrl ?? 'images/placeholder-image.jpg';
         const name = story.name ?? 'Anonim';
         const title = `Story oleh ${name}`;
         const description = story.description ?? '-';
-        const createdAt = new Date(story.createdAt).toLocaleDateString('id-ID', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        });
+        const createdAt = story.createdAt
+          ? new Date(story.createdAt).toLocaleDateString('id-ID', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })
+          : 'Tanggal tidak tersedia';
         const lat = story.lat ?? 'Tidak tersedia';
         const lon = story.lon ?? 'Tidak tersedia';
 
         return `
-      <div tabindex="0" class="report-item" data-reportid="${story.id}">
-        <img class="report-item__image" src="${photo}" alt="${title}">
-        <div class="report-item__body">
-          <div class="report-item__main">
-            <h2 class="report-item__title">${title}</h2>
-            <div class="report-item__more-info">
-              <div class="report-item__createdat">
-                <i class="fas fa-calendar-alt"></i> ${createdAt}
-              </div>
-              <div class="report-item__location">
-                <i class="fas fa-map"></i> ${lat}, ${lon}
+        <div tabindex="0" class="report-item" data-reportid="${story.id}">
+          <img class="report-item__image" src="${photo}" alt="${title}">
+          <div class="report-item__body">
+            <div class="report-item__main">
+              <h2 class="report-item__title">${title}</h2>
+              <div class="report-item__more-info">
+                <div class="report-item__createdat">
+                  <i class="fas fa-calendar-alt"></i> ${createdAt}
+                </div>
+                <div class="report-item__location">
+                  <i class="fas fa-map"></i> ${lat}, ${lon}
+                </div>
               </div>
             </div>
+            <div class="report-item__description">${description}</div>
+            <div class="report-item__author">Dilaporkan oleh: ${name}</div>
           </div>
-          <div class="report-item__description">${description}</div>
-          <div class="report-item__author">Dilaporkan oleh: ${name}</div>
-        </div>
           <a class="btn report-item__read-more" href="#/story/${story.id}">
             Selengkapnya <i class="fas fa-arrow-right"></i>
           </a>
-      </div>
-    `;
+        </div>
+        `;
       })
       .join('');
 
     container.innerHTML = `<div class="reports-list">${html}</div>`;
 
+    // Tambahkan marker ke peta jika ada
     if (this.#map) {
       stories.forEach((story) => {
         if (typeof story.lat === 'number' && typeof story.lon === 'number') {

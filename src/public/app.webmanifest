@@ -1,0 +1,61 @@
+{
+  "id": "/#/",
+  "start_url": "/#/",
+  "scope": "/",
+  "name": "StoryApp",
+  "short_name": "StoryApp",
+  "description": "StoryApp adalah aplikasi berbagi cerita dan pengalaman melalui teks dan foto dengan dukungan fitur lokasi dan notifikasi.",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#d97706",
+  "icons": [
+    {
+      "src": "images/logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/screenshots/Dekstop-1.png",
+      "sizes": "1611x906",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "images/screenshots/Dekstop-2.png",
+      "sizes": "1607x904",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "images/screenshots/Mobile-1.png",
+      "sizes": "398x708",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "images/screenshots/Mobile-2.png",
+      "sizes": "395x702",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "cerita Baru",
+      "short_name": "Baru",
+      "description": "Membuat cerita kerusakan baru.",
+      "url": "/?source=pwa#/new",
+      "icons": [
+        {
+          "src": "images/logo.png",
+          "type": "image/png",
+          "sizes": "512x512",
+          "purpose": "any"
+        }
+      ]
+    }
+  ]
+}

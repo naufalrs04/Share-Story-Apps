@@ -4,6 +4,7 @@ function extractPathnameSegments(path) {
   return {
     resource: splitUrl[1] || null,
     id: splitUrl[2] || null,
+    originalPath: path, // Tambahkan properti originalPath
   };
 }
 
@@ -25,10 +26,24 @@ export function getActivePathname() {
   return location.hash.replace('#', '') || '/';
 }
 
-export function getActiveRoute() {
+export function getActiveRoute(routes) {
+  // Tambahkan parameter routes
   const pathname = getActivePathname();
   const urlSegments = extractPathnameSegments(pathname);
-  return constructRouteFromSegments(urlSegments);
+  const constructedRoute = constructRouteFromSegments(urlSegments);
+
+  // Cek apakah route yang dibangun ada di routes
+  if (routes && !routes[constructedRoute]) {
+    return {
+      route: '/404', // Kembalikan route 404 khusus
+      segments: urlSegments,
+    };
+  }
+
+  return {
+    route: constructedRoute,
+    segments: urlSegments,
+  };
 }
 
 export function parseActivePathname() {
@@ -36,9 +51,23 @@ export function parseActivePathname() {
   return extractPathnameSegments(pathname);
 }
 
-export function getRoute(pathname) {
+export function getRoute(pathname, routes) {
+  // Tambahkan parameter routes
   const urlSegments = extractPathnameSegments(pathname);
-  return constructRouteFromSegments(urlSegments);
+  const constructedRoute = constructRouteFromSegments(urlSegments);
+
+  // Cek apakah route yang dibangun ada di routes
+  if (routes && !routes[constructedRoute]) {
+    return {
+      route: '/404', // Kembalikan route 404 khusus
+      segments: urlSegments,
+    };
+  }
+
+  return {
+    route: constructedRoute,
+    segments: urlSegments,
+  };
 }
 
 export function parsePathname(pathname) {
